@@ -1,0 +1,91 @@
+{
+  "date_arrete": "2026-10-28",
+  "journal": [
+    "Calendrier BCE : 5002 séances du 2007-03-30 au 2026-10-28",
+    "Courbe euro : maturités [0.25, 0.5, 1.0, 2.0, 3.0, 5.0, 7.0, 10.0, 15.0, 20.0, 30.0] ; courbe dollar : [0.25, 0.5, 1.0, 2.0, 3.0, 5.0, 7.0, 10.0, 20.0]"
+  ],
+  "modele_retenu": "fhs",
+  "valeur_fcfa": 100000000000.0,
+  "valeur_eur": 152449017.23741037,
+  "performance": {
+    "debut": "2007-04-02",
+    "fin": "2026-10-28",
+    "seances": 5001,
+    "rendement_total": 1.0407114213349336,
+    "cagr": 0.036596815734787125,
+    "volatilite": 0.042130444888089404,
+    "sharpe": 0.6977397262447461,
+    "sortino": 1.0216298205001895,
+    "baisse_max": -0.0772356285243766,
+    "debut_baisse": "2021-11-19",
+    "creux": "2023-01-02",
+    "retour": "2024-04-12",
+    "calmar": 0.47383333875811834,
+    "asymetrie": -0.01888261757465782,
+    "kurtosis": 3.2886532378760283,
+    "pire_jour": -0.015210219820582419,
+    "date_pire_jour": "2020-03-16",
+    "meilleur_jour": 0.018109114264293576,
+    "part_jours_positifs": 0.53249350129974,
+    "rendement_liquidites": 0.00745619213472648
+  },
+  "decomposition": {
+    "es_total": 0.006386273457129091,
+    "var_param_total": 0.005024419214974947,
+    "diversification_hs": 0.008338930436217494,
+    "var_hs_total": 0.00538642958371511
+  },
+  "duree_s": 16.92157554626465,
+  "positions": [
+    {
+      "code": "liq",
+      "libelle": "Liquidités en euros",
+      "poids": 0.1
+    },
+    {
+      "code": "ze2",
+      "libelle": "Obligations d'État zone euro 2 ans",
+      "poids": 0.2
+    },
+    {
+      "code": "ze5",
+      "libelle": "Obligations d'État zone euro 5 ans",
+      "poids": 0.15
+    },
+    {
+      "code": "ze10",
+      "libelle": "Obligations d'État zone euro 10 ans",
+      "poids": 0.1
+    },
+    {
+      "code": "us2",
+      "libelle": "Bons du Trésor américain 2 ans",
+      "poids": 0.1
+    },
+    {
+      "code": "us5",
+      "libelle": "Bons du Trésor américain 5 ans",
+      "poids": 0.1
+    },
+    {
+      "code": "us10",
+      "libelle": "Bons du Trésor américain 10 ans",
+      "poids": 0.05
+    },
+    {
+      "code": "actze",
+      "libelle": "Actions zone euro (Euro Stoxx 50)",
+      "poids": 0.075
+    },
+    {
+      "code": "actus",
+      "libelle": "Actions américaines (S&P 500)",
+      "poids": 0.075
+    },
+    {
+      "code": "or",
+      "libelle": "Or",
+      "poids": 0.05
+    }
+  ]
+}

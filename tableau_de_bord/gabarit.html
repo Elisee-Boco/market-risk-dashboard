@@ -1,0 +1,473 @@
+<title>Tableau de bord du risque de marché</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Mise en page : la bande du jour choisi en tête, comme l'écran d'un responsable des risques ; dessous la série
+   historique où l'on choisit la date, puis la validation des modèles, les tests de résistance et les limites. */
+:root {
+  --fond: #f2f4f3; --surface: #ffffff; --encre: #111a24; --encre-2: #46515f; --encre-3: #78828f;
+  --trait: #dbe0e3; --trait-fort: #b8c0c7; --accent: #173b5c; --accent-doux: #e3ebf2;
+  --vert: #1e7d46; --vert-fond: #e2f2e7; --orange: #a86500; --orange-fond: #fbeed6; --rouge: #b8342a; --rouge-fond: #f8e1de;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300;
+  --barre: #c9cec9;
+  --titre: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --texte: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --chiffres: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #0d1316; --surface: #151c21; --encre: #e6ebee; --encre-2: #a9b3bb; --encre-3: #7c8791;
+    --trait: #262f36; --trait-fort: #38434c; --accent: #8db5dc; --accent-doux: #1a2836;
+    --vert: #4fbf7d; --vert-fond: #15301f; --orange: #e0a443; --orange-fond: #33270f; --rouge: #ef7466; --rouge-fond: #3a1b18;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #2f9a2f;
+    --barre: #3a4349;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fond: #0d1316; --surface: #151c21; --encre: #e6ebee; --encre-2: #a9b3bb; --encre-3: #7c8791;
+  --trait: #262f36; --trait-fort: #38434c; --accent: #8db5dc; --accent-doux: #1a2836;
+  --vert: #4fbf7d; --vert-fond: #15301f; --orange: #e0a443; --orange-fond: #33270f; --rouge: #ef7466; --rouge-fond: #3a1b18;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #2f9a2f;
+  --barre: #3a4349;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--fond); color: var(--encre); font: 15.5px/1.5 var(--texte); }
+.page { max-width: 1220px; margin: 0 auto; padding-block: 26px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 24px; }
+header { display: flex; flex-direction: column; gap: 6px; max-width: 80ch; }
+.surtitre { font: 600 12px/1.3 var(--texte); letter-spacing: .09em; text-transform: uppercase; color: var(--encre-3); }
+h1 { font: 800 clamp(26px, 3.4vw, 36px)/1.1 var(--titre); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+h2 { font: 700 19px/1.25 var(--titre); margin: 0; text-wrap: balance; }
+h3 { font: 600 14px/1.3 var(--texte); margin: 0; color: var(--encre-2); }
+p { margin: 0; }
+.chapeau { color: var(--encre-2); }
+.n { font-family: var(--chiffres); font-variant-numeric: tabular-nums; }
+.bloc { background: var(--surface); border: 1px solid var(--trait); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.note { font-size: 13px; color: var(--encre-3); }
+.ligne { display: flex; gap: 12px 18px; flex-wrap: wrap; align-items: center; }
+.pastille { font: 600 12px/1 var(--texte); padding: 4px 8px; border-radius: 999px; display: inline-block; white-space: nowrap; }
+.vert { background: var(--vert-fond); color: var(--vert); } .orange { background: var(--orange-fond); color: var(--orange); } .rouge { background: var(--rouge-fond); color: var(--rouge); }
+.neutre { background: var(--accent-doux); color: var(--accent); }
+
+/* Bande du jour */
+.jour { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; background: var(--surface); border: 1px solid var(--trait); border-radius: 8px; overflow: hidden; }
+@media (max-width: 960px) { .jour { grid-template-columns: repeat(2, minmax(0, 1fr)); } .case.date { grid-column: 1 / -1; } }
+.case { padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--trait); border-bottom: 1px solid var(--trait); min-width: 0; }
+.case .lib { font-size: 12.5px; color: var(--encre-3); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.case .grand { font: 500 24px/1.15 var(--chiffres); font-variant-numeric: tabular-nums; }
+.case .petit { font-size: 13px; color: var(--encre-2); }
+.case.date { background: var(--accent); color: var(--surface); }
+.case.date .lib, .case.date .petit { color: var(--surface); opacity: .85; }
+.case.date .grand { font-family: var(--titre); font-weight: 700; font-size: 22px; }
+.jauge { height: 8px; background: var(--fond); border-radius: 4px; overflow: hidden; }
+.jauge i { display: block; height: 100%; border-radius: 4px; }
+
+/* Contrôles */
+.segment { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--trait-fort); border-radius: 6px; overflow: hidden; max-width: 100%; }
+.segment button { font: 600 13px/1 var(--texte); padding: 8px 11px; border: 0; background: var(--surface); color: var(--encre-2); cursor: pointer; }
+.segment button + button { border-left: 1px solid var(--trait-fort); }
+.segment button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+.puce-modele { display: inline-flex; gap: 6px; align-items: center; font: 600 13px/1 var(--texte); padding: 6px 10px; border-radius: 999px;
+  border: 1px solid var(--trait-fort); background: var(--surface); color: var(--encre-2); cursor: pointer; }
+.puce-modele[aria-pressed="false"] { opacity: .45; }
+.puce-modele i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+input[type="date"] { font: 14px var(--texte); padding: 6px 8px; border: 1px solid var(--trait-fort); border-radius: 6px; background: var(--surface); color: var(--encre); }
+
+/* Graphique */
+.cadre { position: relative; overflow-x: auto; }
+.cadre svg { display: block; width: 100%; min-width: 700px; height: auto; cursor: crosshair; touch-action: pan-x; }
+svg text { font: 11px var(--texte); fill: var(--encre-3); }
+.bulle { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--trait-fort); border-radius: 6px; padding: 8px 10px;
+  font-size: 12.5px; box-shadow: 0 4px 14px rgba(0,0,0,.12); min-width: 190px; }
+.bulle div { display: flex; justify-content: space-between; gap: 12px; }
+
+/* Tableaux */
+.defile { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { text-align: left; font-weight: 600; color: var(--encre-3); font-size: 12.5px; padding: 6px 8px; border-bottom: 1px solid var(--trait-fort); }
+td { padding: 7px 8px; border-bottom: 1px solid var(--trait); vertical-align: middle; }
+td.n, th.n { text-align: right; white-space: nowrap; }
+tr.ref td { background: var(--accent-doux); font-weight: 600; }
+.grille2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 960px) { .grille2 { grid-template-columns: minmax(0, 1fr); } }
+.barres { display: flex; flex-direction: column; gap: 8px; }
+.barre { display: grid; grid-template-columns: 150px minmax(0, 1fr) 52px; gap: 10px; align-items: center; font-size: 14px; }
+.piste { height: 12px; background: var(--fond); border-radius: 3px; position: relative; }
+.piste i { position: absolute; top: 0; bottom: 0; border-radius: 3px; }
+.barre b { text-align: right; font-family: var(--chiffres); font-weight: 500; font-size: 13px; }
+.chaleur td.n { font-size: 13px; }
+.scenario { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.6fr) 92px; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--trait); font-size: 14px; }
+.scenario .pile { position: relative; height: 16px; background: var(--fond); border-radius: 3px; }
+.scenario .pile i { position: absolute; top: 0; bottom: 0; }
+.scenario .pile .zero { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--encre-2); }
+@media (max-width: 640px) { .scenario { grid-template-columns: minmax(0, 1fr) 80px; } .scenario .pile { grid-column: 1 / -1; } .barre { grid-template-columns: 110px minmax(0, 1fr) 46px; } }
+.legende { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--encre-2); }
+.legende span { display: inline-flex; gap: 6px; align-items: center; }
+.legende i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+.glisser { display: none; } @media (max-width: 760px) { .glisser { display: block; } }
+footer { font-size: 13px; color: var(--encre-2); display: flex; flex-direction: column; gap: 6px; max-width: 95ch; }
+a { color: var(--accent); }
+</style>
+
+<div class="page">
+  <header>
+    <div class="surtitre">Trésorerie de 100 milliards de FCFA · mars 2008 – octobre 2026 · Elisée Boco</div>
+    <h1>Tableau de bord du risque de marché</h1>
+    <p class="chapeau">Obligations d'État en euros et en dollars, actions, or et liquidités, valorisés en euros, donc en francs CFA. Choisissez une séance sur le graphique : la bande ci-dessous montre la VaR de chaque modèle, ce qui s'est passé le lendemain et l'état du feu tricolore de Bâle.</p>
+  </header>
+
+  <section class="jour" id="bande" aria-live="polite"></section>
+
+  <section class="bloc" aria-labelledby="t-hist">
+    <div class="ligne" style="justify-content:space-between">
+      <h2 id="t-hist">La VaR de chaque modèle, et le rendement du lendemain</h2>
+      <div class="ligne">
+        <div class="segment" role="group" aria-label="Période affichée" id="periodes"></div>
+        <label class="note" for="choix-date">Séance <input type="date" id="choix-date"></label>
+      </div>
+    </div>
+    <div class="ligne" id="puces" role="group" aria-label="Modèles affichés"></div>
+    <div class="cadre" id="cadre"><svg id="graphe" viewBox="0 0 1160 360" role="img" aria-label="VaR à 99 % de chaque modèle et rendement du lendemain"></svg><div class="bulle" id="bulle" hidden></div></div>
+    <p class="note glisser">Faites glisser le graphique pour voir toute la période.</p>
+    <p class="note">Barres : rendement du lendemain. Lignes : VaR à 99 % sur un jour, en perte. Points rouges : dépassements du modèle de référence. Cliquez sur le graphique pour choisir une séance.</p>
+  </section>
+
+  <section class="grille2">
+    <div class="bloc">
+      <h2>Les six modèles à la séance choisie</h2>
+      <div class="defile"><table id="t-modeles"></table></div>
+      <p class="note">Dépassements sur les 250 séances précédentes : vert de 0 à 4, orange de 5 à 9, rouge à partir de 10 (Comité de Bâle). Le Monte-Carlo n'est calculé que pour la dernière séance.</p>
+    </div>
+    <div class="bloc">
+      <h2>D'où vient le risque</h2>
+      <p class="note" id="t-decomp-date"></p>
+      <div class="barres" id="decomp"></div>
+      <p class="note">Part de chaque facteur dans les pertes des 2,5 % pires scénarios des 500 séances précédentes (fin de mois).</p>
+    </div>
+  </section>
+
+  <section class="bloc" aria-labelledby="t-valid">
+    <h2 id="t-valid">Quel modèle retenir ? La validation 2008 – 2026</h2>
+    <div class="defile"><table id="t-backtest"></table></div>
+    <p class="note" id="regle"></p>
+    <h3>Dépassements par année</h3>
+    <div class="defile"><table class="chaleur" id="t-annees"></table></div>
+  </section>
+
+  <section class="bloc" aria-labelledby="t-stress">
+    <div class="ligne" style="justify-content:space-between">
+      <h2 id="t-stress">Tests de résistance sur le portefeuille du jour</h2>
+      <div class="segment" role="group" aria-label="Type de scénario" id="f-stress"></div>
+    </div>
+    <div class="legende" id="leg-stress"></div>
+    <div id="stress"></div>
+    <p class="note">Crises : variations de taux, de prix et de change observées pendant la crise, appliquées au portefeuille d'aujourd'hui avec revalorisation complète des obligations. Dernière colonne : par combien multiplier le scénario pour perdre 5 % de la valeur.</p>
+  </section>
+
+  <section class="grille2">
+    <div class="bloc">
+      <h2>Limites au 28 octobre 2026</h2>
+      <div class="defile"><table id="t-limites"></table></div>
+    </div>
+    <div class="bloc">
+      <h2>Faut-il couvrir le dollar ?</h2>
+      <div class="segment" role="group" aria-label="Part du dollar couverte" id="f-couv"></div>
+      <div class="defile"><table id="t-couv"></table></div>
+      <p class="note">Couverture à terme : le rendement de change est remplacé par l'écart de taux entre l'euro et le dollar. Sans frais de transaction. Rendement, volatilité et baisse calculés sur 2007 – 2026.</p>
+    </div>
+  </section>
+
+  <section class="bloc" aria-labelledby="t-sens">
+    <h2 id="t-sens">Positions et sensibilités aux taux</h2>
+    <div class="defile"><table id="t-sens-table"></table></div>
+  </section>
+
+  <footer>
+    <p><b>Méthode.</b> Allocation fixée à l'avance et rééquilibrée chaque jour. Obligations à maturité constante, valorisées sur la courbe zéro-coupon AAA de la BCE et sur les taux au pair du Trésor américain. Six modèles : simulation historique sur 500 séances avec revalorisation complète, normale et Student sur 250 séances, EWMA (λ = 0,94), simulation historique filtrée par un GARCH(1,1), Monte-Carlo. Tests : Kupiec, Christoffersen, feux tricolores de Bâle, Acerbi-Székely pour l'Expected Shortfall.</p>
+    <p><b>Sources.</b> <a href="https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve">Trésor américain</a>, <a href="https://data.ecb.europa.eu/data/datasets/YC">BCE, courbe des taux</a>, <a href="https://data.ecb.europa.eu/data/datasets/EXR">BCE, taux de change de référence</a>, Yahoo Finance (Euro Stoxx 50, S&amp;P 500, or). Données arrêtées au 28 octobre 2026. Code : <a href="https://github.com/Elisee-Boco/market-risk-dashboard">github.com/Elisee-Boco/market-risk-dashboard</a>.</p>
+  </footer>
+</div>
+
+<script>
+const D = /*__DONNEES__*/null;
+const M = D.modeles;
+const COUL = { hs: "var(--s1)", normale: "var(--s2)", student: "var(--s3)", ewma: "var(--s4)", fhs: "var(--s5)", mc: "var(--s6)" };
+const COURT = { hs: "Historique", normale: "Normale", student: "Student", ewma: "EWMA", fhs: "FHS (GARCH)", mc: "Monte-Carlo" };
+const CMANCHE = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)", "var(--s5)", "var(--s6)"];
+const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+const NS = "http://www.w3.org/2000/svg";
+const N = D.dates.length;
+
+const fmt = (x, d = 2) => x === null || x === undefined || Number.isNaN(x) ? "–" : x.toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d }).replace("-", "−");
+const sgn = (x, d = 2) => { if (x === null || x === undefined) return "–"; const r = Math.round(x * 10 ** d) / 10 ** d; return (r > 0 ? "+" : "") + fmt(r === 0 ? 0 : r, d); };
+const pct = (x, d = 0) => fmt(x * 100, d) + " %";
+const dateLongue = s => { const [a, m, j] = s.split("-").map(Number); return `${j === 1 ? "1er" : j} ${MOIS[m - 1]} ${a}`; };
+const zone = k => k === null ? "neutre" : k <= 4 ? "vert" : k <= 9 ? "orange" : "rouge";
+const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const mfcfa = pctv => fmt(pctv / 100 * D.valeur_fcfa / 1e6, 0) + " M";
+
+const etat = { i: N - 1, periode: "tout", visibles: new Set(M), stress: "tous", couv: 0 };
+try { const s = JSON.parse(localStorage.getItem("tdb-risque") || "{}"); if (s.periode) etat.periode = s.periode; if (s.visibles) etat.visibles = new Set(s.visibles.filter(m => M.includes(m))); } catch (e) {}
+const garder = () => { try { localStorage.setItem("tdb-risque", JSON.stringify({ periode: etat.periode, visibles: [...etat.visibles] })); } catch (e) {} };
+
+// ------------------------------------------------------------------ Bande du jour
+function bande() {
+  const i = etat.i, r = D.retenu, v = D.var[r][i], e = D.es[r][i], x = D.r[i], k = D.bale[r][i];
+  const util = v / D.limites.var99_1j;
+  const ut = util >= 1 ? "rouge" : util >= 0.8 ? "orange" : "vert";
+  const dep = x !== null && x < -v;
+  const suiv = i + 1 < N ? D.dates[i + 1] : null;
+  document.getElementById("bande").innerHTML = `
+    <div class="case date"><span class="lib">Séance choisie</span><span class="grand">${dateLongue(D.dates[i])}</span>
+      <span class="petit">Valeur : ${fmt(D.valeur[i], 1)} Md FCFA</span></div>
+    <div class="case"><span class="lib">VaR 99 % · 1 jour</span><span class="grand">${mfcfa(v)}</span>
+      <span class="petit">${fmt(v, 2)} % · ${COURT[r]}, modèle de référence</span>
+      <div class="jauge" title="Utilisation de la limite"><i style="width:${Math.min(util, 1) * 100}%;background:var(--${ut})"></i></div>
+      <span class="petit">${pct(util)} de la limite de ${fmt(D.limites.var99_1j, 2)} %</span></div>
+    <div class="case"><span class="lib">Expected Shortfall 97,5 %</span><span class="grand">${mfcfa(e)}</span>
+      <span class="petit">${fmt(e, 2)} % : perte moyenne des 2,5 % pires jours attendus</span></div>
+    <div class="case"><span class="lib">Le lendemain</span><span class="grand" style="color:${dep ? "var(--rouge)" : "inherit"}">${x === null ? "à venir" : sgn(x, 2) + " %"}</span>
+      <span class="petit">${x === null ? "Dernière séance disponible" : (dep ? "Dépassement : la perte a dépassé la VaR" : "Dans la VaR") + (suiv ? ` (${dateLongue(suiv)})` : "")}</span></div>
+    <div class="case"><span class="lib">Feu tricolore de Bâle</span><span class="grand">${k === null ? "–" : k + " / 250"}</span>
+      <span><span class="pastille ${zone(k)}">${k === null ? "moins de 250 séances" : "zone " + ({ vert: "verte", orange: "orange", rouge: "rouge" })[zone(k)]}</span></span>
+      <span class="petit">Dépassements du modèle de référence sur 250 séances</span></div>`;
+  document.getElementById("choix-date").value = D.dates[i];
+}
+
+// ------------------------------------------------------------------ Graphique
+const W = 1160, H = 360, G = 56, DR = 14, HAUT = 16, BAS = 30;
+let vue = [0, N - 1];
+function bornes() {
+  const p = etat.periode;
+  const idx = s => { let k = D.dates.findIndex(d => d >= s); return k < 0 ? N - 1 : k; };
+  if (p === "tout") return [0, N - 1];
+  if (p === "12m") return [Math.max(0, N - 252), N - 1];
+  const [a, b] = { "2008": ["2008-01-01", "2009-12-31"], "2020": ["2020-01-01", "2020-12-31"], "2022": ["2022-01-01", "2023-06-30"] }[p];
+  return [idx(a), Math.max(idx(a), idx(b) - 1)];
+}
+function graphe() {
+  vue = bornes();
+  const [a, b] = vue;
+  const s = document.getElementById("graphe");
+  s.innerHTML = "";
+  let mn = 0, mx = 0;
+  for (let k = a; k <= b; k++) {
+    if (D.r[k] !== null) { mn = Math.min(mn, D.r[k]); mx = Math.max(mx, D.r[k]); }
+    for (const m of etat.visibles) mn = Math.min(mn, -D.var[m][k]);
+  }
+  mn = Math.floor(mn * 2) / 2 - 0.25; mx = Math.ceil(mx * 2) / 2 + 0.25;
+  const x = k => G + (k - a) / Math.max(b - a, 1) * (W - G - DR);
+  const y = v => HAUT + (mx - v) / (mx - mn) * (H - HAUT - BAS);
+  for (let v = Math.ceil(mn * 2) / 2; v <= mx; v += 0.5) {
+    el("line", { x1: G, x2: W - DR, y1: y(v), y2: y(v), stroke: "var(--trait)", "stroke-width": v === 0 ? 1.4 : 1 }, s);
+    el("text", { x: G - 8, y: y(v) + 4, "text-anchor": "end" }, s).textContent = fmt(v, 1) + " %";
+  }
+  // étiquettes de dates
+  const annees = new Set();
+  for (let k = a; k <= b; k++) {
+    const d = D.dates[k], an = d.slice(0, 4), mo = d.slice(5, 7);
+    const pas = b - a > 900 ? (+an % 2 === 0 && mo === "01") : b - a > 300 ? mo === "01" || mo === "07" : true;
+    const cle = b - a > 300 ? an + (mo === "07" ? "b" : "") : d.slice(0, 7);
+    if (pas && !annees.has(cle) && (b - a > 300 ? true : d.slice(8) <= "07")) {
+      annees.add(cle);
+      el("line", { x1: x(k), x2: x(k), y1: HAUT, y2: H - BAS, stroke: "var(--trait)" }, s);
+      el("text", { x: x(k) + 3, y: H - 10 }, s).textContent = b - a > 300 ? (mo === "07" ? "juil. " + an : an) : MOIS[+mo - 1] + " " + an;
+    }
+  }
+  const barres = [];
+  const largeur = Math.max(1, (W - G - DR) / (b - a + 1) * 0.7);
+  for (let k = a; k <= b; k++) if (D.r[k] !== null) barres.push(`M${x(k)},${y(0)}V${y(D.r[k])}`);
+  el("path", { d: barres.join(""), stroke: "var(--barre)", "stroke-width": largeur, fill: "none" }, s);
+  for (const m of M) {
+    if (!etat.visibles.has(m)) continue;
+    let d = "";
+    for (let k = a; k <= b; k++) d += (k === a ? "M" : "L") + x(k).toFixed(1) + "," + y(-D.var[m][k]).toFixed(1);
+    el("path", { d, fill: "none", stroke: COUL[m], "stroke-width": m === D.retenu ? 1.8 : 1.1, opacity: m === D.retenu ? 1 : 0.8 }, s);
+  }
+  const r = D.retenu;
+  for (let k = a; k <= b; k++) if (D.r[k] !== null && D.r[k] < -D.var[r][k]) el("circle", { cx: x(k), cy: y(D.r[k]), r: b - a > 900 ? 2.6 : 3.6, fill: "var(--rouge)" }, s);
+  // curseur de la séance choisie
+  if (etat.i >= a && etat.i <= b) {
+    el("line", { x1: x(etat.i), x2: x(etat.i), y1: HAUT, y2: H - BAS, stroke: "var(--accent)", "stroke-width": 1.5, "stroke-dasharray": "4 3" }, s);
+  }
+  const survol = el("line", { x1: 0, x2: 0, y1: HAUT, y2: H - BAS, stroke: "var(--encre-3)", "stroke-width": 1, visibility: "hidden" }, s);
+  const zoneSurvol = el("rect", { x: G, y: HAUT, width: W - G - DR, height: H - HAUT - BAS, fill: "transparent" }, s);
+  const bulle = document.getElementById("bulle");
+  const versIndex = ev => {
+    const bb = s.getBoundingClientRect();
+    const px = (ev.clientX - bb.left) / bb.width * W;
+    return Math.round(a + (px - G) / (W - G - DR) * (b - a));
+  };
+  zoneSurvol.addEventListener("mousemove", ev => {
+    const k = Math.max(a, Math.min(b, versIndex(ev)));
+    survol.setAttribute("x1", x(k)); survol.setAttribute("x2", x(k)); survol.setAttribute("visibility", "visible");
+    let h = `<b>${dateLongue(D.dates[k])}</b><div><span>Lendemain</span><span class="n">${D.r[k] === null ? "–" : sgn(D.r[k], 2) + " %"}</span></div>`;
+    for (const m of M) if (etat.visibles.has(m)) h += `<div><span style="color:${COUL[m]}">${COURT[m]}</span><span class="n">${fmt(D.var[m][k], 2)} %</span></div>`;
+    bulle.innerHTML = h;
+    bulle.hidden = false;
+    const cadre = document.getElementById("cadre").getBoundingClientRect();
+    let gauche = ev.clientX - cadre.left + 14;
+    if (gauche + 210 > cadre.width) gauche -= 230;
+    bulle.style.left = gauche + "px";
+    bulle.style.top = Math.max(0, ev.clientY - cadre.top - 40) + "px";
+  });
+  zoneSurvol.addEventListener("mouseleave", () => { survol.setAttribute("visibility", "hidden"); bulle.hidden = true; });
+  zoneSurvol.addEventListener("click", ev => choisir(Math.max(a, Math.min(b, versIndex(ev)))));
+}
+
+// ------------------------------------------------------------------ Séance choisie : modèles et décomposition
+function modeles() {
+  const i = etat.i, last = i === N - 1;
+  const jour = Object.fromEntries(D.jour.map(j => [j.modele, j]));
+  let h = `<thead><tr><th>Modèle</th><th class="n">VaR 99 %</th><th class="n">FCFA</th><th class="n">ES 97,5 %</th><th class="n">250 j</th><th>Bâle</th><th>Lendemain</th></tr></thead><tbody>`;
+  for (const m of M) {
+    const v = D.var[m][i], e = D.es[m][i], k = D.bale[m][i], x = D.r[i];
+    const dep = x === null ? "–" : x < -v ? `<span class="pastille rouge">dépassement</span>` : `<span class="pastille vert">dans la VaR</span>`;
+    h += `<tr class="${m === D.retenu ? "ref" : ""}"><td>${esc(D.libelles[m])}${m === D.retenu ? " · référence" : ""}</td><td class="n">${fmt(v, 2)} %</td>
+      <td class="n">${mfcfa(v)}</td><td class="n">${fmt(e, 2)} %</td><td class="n">${k === null ? "–" : k}</td>
+      <td><span class="pastille ${zone(k)}">${k === null ? "–" : zone(k)}</span></td><td>${dep}</td></tr>`;
+  }
+  if (last && jour.mc) h += `<tr><td>${esc(D.libelles.mc)}</td><td class="n">${fmt(jour.mc.var99_1j * 100, 2)} %</td><td class="n">${mfcfa(jour.mc.var99_1j * 100)}</td>
+      <td class="n">${fmt(jour.mc.es975_1j * 100, 2)} %</td><td class="n">–</td><td>–</td><td>–</td></tr>`;
+  document.getElementById("t-modeles").innerHTML = h + "</tbody>";
+}
+function decomposition() {
+  const d = D.dates[etat.i];
+  let k = D.mois.findIndex(m => m > d) - 1;
+  if (k < -1) k = D.mois.length - 1;
+  if (k < 0) k = 0;
+  const parts = D.manches.map((c, j) => ({ c, v: D.parts[c][k], couleur: CMANCHE[j] }));
+  const mx = Math.max(...parts.map(p => Math.abs(p.v)), 0.01);
+  document.getElementById("t-decomp-date").textContent = `Situation à fin ${MOIS[+D.mois[k].slice(5, 7) - 1]} ${D.mois[k].slice(0, 4)}`;
+  document.getElementById("decomp").innerHTML = parts.map(p => {
+    const w = Math.abs(p.v) / mx * 50, g = p.v >= 0 ? 50 : 50 - w;
+    return `<div class="barre"><span>${p.c}</span><div class="piste"><i style="left:${g}%;width:${w}%;background:${p.couleur}"></i><i style="left:50%;width:1px;background:var(--trait-fort)"></i></div><b>${pct(p.v)}</b></div>`;
+  }).join("");
+}
+
+// ------------------------------------------------------------------ Validation
+function validation() {
+  const t = D.backtest;
+  let h = `<thead><tr><th>Modèle</th><th class="n">Dépassements</th><th class="n">Kupiec p</th><th class="n">Indép. p</th><th class="n">Zone verte</th><th class="n">Zone rouge</th><th>ES (Z2)</th><th class="n">VaR moyenne</th><th class="n">Rang</th></tr></thead><tbody>`;
+  for (const r of t) {
+    const ok = r.p_pof > 0.05;
+    h += `<tr class="${r.modele === D.retenu ? "ref" : ""}"><td>${esc(r.libelle)}</td><td class="n">${r.depassements} / ${fmt(r.attendus, 0)}</td>
+      <td class="n"><span class="pastille ${ok ? "vert" : "rouge"}">${fmt(r.p_pof, 2)}</span></td>
+      <td class="n"><span class="pastille ${r.p_ind > 0.05 ? "vert" : "rouge"}">${fmt(r.p_ind, 3)}</span></td>
+      <td class="n">${pct(r.part_vert)}</td><td class="n">${pct(r.part_rouge)}</td>
+      <td><span class="pastille ${r.verdict_es}">${fmt(r.z2_es, 2)}</span></td><td class="n">${fmt(r.var_moyenne * 100, 2)} %</td><td class="n">${r.rang_perte_quantile}</td></tr>`;
+  }
+  document.getElementById("t-backtest").innerHTML = h + "</tbody>";
+  document.getElementById("regle").innerHTML = `<b>Règle fixée à l'avance :</b> parmi les modèles qui passent le test de Kupiec (p &gt; 0,05), ne passent jamais en zone rouge et dont l'Expected Shortfall passe le test d'Acerbi-Székely, on retient celui qui suit le mieux le vrai quantile (rang de la perte quantile). Résultat : <b>${esc(D.libelles[D.retenu])}</b>. Aucun modèle ne passe le test d'indépendance : les dépassements arrivent en grappes.`;
+  const a = D.par_annee;
+  let g = `<thead><tr><th>Modèle</th>${a.annees.map(x => `<th class="n">${String(x).slice(2)}</th>`).join("")}</tr></thead><tbody>`;
+  for (const m of M) {
+    g += `<tr><td>${COURT[m]}</td>` + a[m].map((v, k) => {
+      const att = a.seances[k] * 0.01, ratio = v / att;
+      const cls = ratio > 2.5 ? "rouge" : ratio > 1.5 ? "orange" : "";
+      return `<td class="n"><span class="${cls ? "pastille " + cls : ""}">${v}</span></td>`;
+    }).join("") + "</tr>";
+  }
+  g += `<tr><td class="note">Attendus</td>${a.seances.map(s => `<td class="n note">${fmt(s * 0.01, 1)}</td>`).join("")}</tr>`;
+  document.getElementById("t-annees").innerHTML = g + "</tbody>";
+}
+
+// ------------------------------------------------------------------ Résistance
+function resistance() {
+  document.getElementById("f-stress").innerHTML = [["tous", "Tous"], ["historique", "Crises rejouées"], ["hypothétique", "Hypothèses"]]
+    .map(([k, l]) => `<button type="button" aria-pressed="${etat.stress === k}" data-k="${k}">${l}</button>`).join("");
+  document.querySelectorAll("#f-stress button").forEach(b => b.onclick = () => { etat.stress = b.dataset.k; resistance(); });
+  document.getElementById("leg-stress").innerHTML = D.manches.map((c, j) => `<span><i style="background:${CMANCHE[j]}"></i>${c}</span>`).join("");
+  const s = D.resistance.filter(r => etat.stress === "tous" || r.type === etat.stress).sort((a, b) => a.rendement - b.rendement);
+  let mn = 0, mx = 0;
+  for (const r of s) {
+    let neg = 0, pos = 0;
+    for (const c of D.manches) { const v = r["c_" + c]; if (v < 0) neg += v; else pos += v; }
+    mn = Math.min(mn, neg); mx = Math.max(mx, pos);
+  }
+  const ech = v => (v - mn) / (mx - mn) * 100;
+  document.getElementById("stress").innerHTML = s.map(r => {
+    let neg = 0, pos = 0, segs = "";
+    D.manches.forEach((c, j) => {
+      const v = r["c_" + c];
+      if (Math.abs(v) < 1e-6) return;
+      const debut = v < 0 ? neg + v : pos, fin = v < 0 ? neg : pos + v;
+      segs += `<i style="left:${ech(debut)}%;width:${ech(fin) - ech(debut)}%;background:${CMANCHE[j]}" title="${c} : ${sgn(v * 100, 2)} %"></i>`;
+      if (v < 0) neg += v; else pos += v;
+    });
+    const k = r.multiple_inverse;
+    return `<div class="scenario"><div>${esc(r.scenario)}<br><span class="note">${r.type === "historique" ? `crise du ${dateLongue(r.debut)} au ${dateLongue(r.fin)}` : "scénario hypothétique, instantané"}${k === null ? "" : ` · ×${fmt(k, 2)} pour perdre 5 %`}</span></div>
+      <div class="pile">${segs}<span class="zero" style="left:${ech(0)}%"></span></div>
+      <div class="n" style="text-align:right;color:${r.rendement < 0 ? "var(--rouge)" : "var(--vert)"}">${sgn(r.rendement * 100, 1)} %<br><span class="note">${sgn(-r.perte_eur * D.fcfa_par_euro / 1e9, 1)} Md</span></div></div>`;
+  }).join("");
+}
+
+// ------------------------------------------------------------------ Limites, couverture, sensibilités
+function limites() {
+  let h = `<thead><tr><th>Indicateur</th><th class="n">Valeur</th><th class="n">Limite</th><th>Utilisation</th><th>Statut</th></tr></thead><tbody>`;
+  for (const l of D.limites_jour) {
+    const d = l.limite < 1 ? 3 : 2;
+    h += `<tr><td>${esc(l.libelle)}</td><td class="n">${fmt(l.valeur, d)}</td><td class="n">${fmt(l.limite, d)}</td>
+      <td style="min-width:110px"><div class="jauge"><i style="width:${Math.min(l.utilisation, 1) * 100}%;background:var(--${l.statut})"></i></div><span class="note">${pct(l.utilisation)}</span></td>
+      <td><span class="pastille ${l.statut}">${l.statut}</span></td></tr>`;
+  }
+  document.getElementById("t-limites").innerHTML = h + "</tbody>";
+}
+function couverture() {
+  const c = D.couverture;
+  document.getElementById("f-couv").innerHTML = c.map((r, k) => `<button type="button" aria-pressed="${etat.couv === k}" data-k="${k}">${pct(r.ratio)}</button>`).join("");
+  document.querySelectorAll("#f-couv button").forEach(b => b.onclick = () => { etat.couv = +b.dataset.k; couverture(); });
+  const r = c[etat.couv], z = c[0];
+  const ligne = (lib, v, v0, d = 2, mieux = "bas") => {
+    const delta = v - v0, bon = mieux === "bas" ? delta < 0 : delta > 0;
+    return `<tr><td>${lib}</td><td class="n">${fmt(v * 100, d)} %</td><td class="n" style="color:${Math.abs(delta) < 1e-9 ? "inherit" : bon ? "var(--vert)" : "var(--rouge)"}">${etat.couv === 0 ? "–" : sgn(delta * 100, d) + " pt"}</td></tr>`;
+  };
+  document.getElementById("t-couv").innerHTML = `<thead><tr><th>Indicateur</th><th class="n">Valeur</th><th class="n">Écart sans couverture</th></tr></thead><tbody>
+    ${ligne("Rendement annuel", r.cagr, z.cagr, 2, "haut")}${ligne("Volatilité annuelle", r.volatilite, z.volatilite)}
+    ${ligne("Baisse maximale", -r.baisse_max, -z.baisse_max)}${ligne("Pire jour", -r.pire_jour, -z.pire_jour)}
+    ${ligne("VaR 99 % du jour", r.var99_hs_jour, z.var99_hs_jour, 3)}${ligne("ES 97,5 % du jour", r.es975_hs_jour, z.es975_hs_jour, 3)}</tbody>`;
+}
+function sensibilites() {
+  let h = `<thead><tr><th>Position</th><th>Devise</th><th class="n">Poids</th><th class="n">Montant</th><th class="n">Taux</th><th class="n">Duration</th><th class="n">Convexité</th><th class="n">PV01</th></tr></thead><tbody>`;
+  for (const s of D.sensibilites) {
+    h += `<tr><td>${esc(s.libelle)}</td><td>${s.devise}</td><td class="n">${pct(s.poids, 1)}</td><td class="n">${fmt(s.montant_eur * D.fcfa_par_euro / 1e9, 1)} Md</td>
+      <td class="n">${s.taux === null ? "–" : fmt(s.taux, 2) + " %"}</td><td class="n">${s.duration === null ? "–" : fmt(s.duration, 2)}</td>
+      <td class="n">${s.convexite === null ? "–" : fmt(s.convexite, 1)}</td><td class="n">${s.pv01_eur === null ? "–" : fmt(s.pv01_eur * D.fcfa_par_euro / 1e6, 2) + " M"}</td></tr>`;
+  }
+  document.getElementById("t-sens-table").innerHTML = h + `</tbody>`;
+}
+
+// ------------------------------------------------------------------ Contrôles
+function choisir(i) {
+  etat.i = Math.max(0, Math.min(N - 1, i));
+  bande(); modeles(); decomposition(); graphe();
+  try { history.replaceState(null, "", "#seance-" + D.dates[etat.i]); } catch (e) {}
+}
+function controles() {
+  document.getElementById("periodes").innerHTML = [["tout", "2008 – 2026"], ["2008", "2008 – 2009"], ["2020", "2020"], ["2022", "2022 – 2023"], ["12m", "12 derniers mois"]]
+    .map(([k, l]) => `<button type="button" aria-pressed="${etat.periode === k}" data-k="${k}">${l}</button>`).join("");
+  document.querySelectorAll("#periodes button").forEach(b => b.onclick = () => { etat.periode = b.dataset.k; garder(); controles(); graphe(); });
+  document.getElementById("puces").innerHTML = M.map(m => `<button type="button" class="puce-modele" aria-pressed="${etat.visibles.has(m)}" data-m="${m}"><i style="background:${COUL[m]}"></i>${COURT[m]}${m === D.retenu ? " · réf." : ""}</button>`).join("");
+  document.querySelectorAll(".puce-modele").forEach(b => b.onclick = () => {
+    const m = b.dataset.m;
+    if (etat.visibles.has(m) && etat.visibles.size > 1) etat.visibles.delete(m); else etat.visibles.add(m);
+    garder(); controles(); graphe();
+  });
+}
+const champ = document.getElementById("choix-date");
+champ.min = D.dates[0]; champ.max = D.dates[N - 1];
+champ.addEventListener("change", () => { const k = D.dates.findIndex(d => d >= champ.value); if (k >= 0) choisir(k); });
+
+controles(); validation(); resistance(); limites(); couverture(); sensibilites();
+const h0 = location.hash.match(/^#seance-(\d{4}-\d{2}-\d{2})$/);
+const k0 = h0 ? D.dates.indexOf(h0[1]) : -1;
+choisir(k0 >= 0 ? k0 : N - 1);
+window.addEventListener("hashchange", () => { const h = location.hash.match(/^#seance-(\d{4}-\d{2}-\d{2})$/); const k = h ? D.dates.indexOf(h[1]) : -1; if (k >= 0 && k !== etat.i) choisir(k); });
+</script>

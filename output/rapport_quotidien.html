@@ -1,0 +1,48 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Rapport de risque du 28 octobre 2026</title>
+<style>
+@page { size: A4; margin: 12mm 12mm 10mm; }
+* { box-sizing: border-box; }
+body { font: 9.4pt/1.35 "DejaVu Sans", Arial, sans-serif; color: #14213d; margin: 0; }
+h1 { font-size: 15pt; margin: 0; } h2 { font-size: 10pt; margin: 0 0 4px; color: #13213a; text-transform: uppercase; letter-spacing: .04em; }
+.tete { display: flex; justify-content: space-between; align-items: end; border-bottom: 2px solid #13213a; padding-bottom: 6px; margin-bottom: 8px; }
+.tete p { margin: 2px 0 0; color: #4a5568; }
+.kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.kpi div { border: 1px solid #d8dee8; border-top: 3px solid #2a78d6; padding: 6px 8px; }
+.kpi b { display: block; font-size: 14pt; } .kpi span { color: #4a5568; font-size: 8pt; }
+.grille { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+section { margin-bottom: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 8.4pt; }
+th { text-align: left; color: #4a5568; font-weight: 600; border-bottom: 1px solid #b9c1cc; padding: 3px 4px; }
+td { border-bottom: 1px solid #e5e9ef; padding: 3px 4px; } td.n { text-align: right; white-space: nowrap; }
+tr.ref td { background: #eef4fc; font-weight: 600; }
+.pastille { padding: 1px 6px; border-radius: 8px; font-size: 7.6pt; font-weight: 600; }
+.jauge { width: 70px; height: 7px; background: #eef1f5; } .jauge i { display: block; height: 7px; }
+.bar { display: grid; grid-template-columns: 120px 1fr 36px; gap: 6px; align-items: center; margin: 2px 0; font-size: 8.4pt; }
+.piste { background: #eef1f5; height: 9px; } .piste i { display: block; height: 9px; } .bar b { text-align: right; }
+.lecture { background: #f3f6fa; padding: 6px 8px; border-left: 3px solid #13213a; font-size: 8.6pt; }
+.lecture p { margin: 2px 0; }
+.pied { color: #6a7383; font-size: 7.4pt; margin-top: 4px; }
+</style></head><body>
+<div class="tete"><div><h1>Rapport de risque de marché</h1><p>Trésorerie de 100 milliards de FCFA · séance du 28 octobre 2026</p></div>
+<div style="text-align:right"><p>Modèle de référence : <b>Simulation historique filtrée (GARCH)</b></p><p>Toutes les limites sont respectées.</p></div></div>
+<div class="kpi">
+<div><b>515 M FCFA</b><span>VaR 99 % à 1 jour (0,52 %)</span></div>
+<div><b>546 M FCFA</b><span>Expected Shortfall 97,5 % à 1 jour (0,55 %)</span></div>
+<div><b>2,13 Md FCFA</b><span>VaR 99 % à 10 jours, historique directe (2,13 %)</span></div>
+<div style="border-top-color:#c0392b"><b>−11,0 Md FCFA</b><span>Pire test de résistance : Stagflation</span></div>
+</div>
+<section><h2>Limites</h2><table><tr><th>Indicateur</th><th>Valeur</th><th>Limite</th><th></th><th>Utilisation</th><th>Statut</th></tr><tr><td>VaR 99 % à 1 jour (% de la valeur)</td><td class='n'>0,515</td><td class='n'>1,00</td><td><div class='jauge'><i style='width:52%;background:#1e8449'></i></div></td><td class='n'>52 %</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>Expected Shortfall 97,5 % à 1 jour (%)</td><td class='n'>0,546</td><td class='n'>1,10</td><td><div class='jauge'><i style='width:50%;background:#1e8449'></i></div></td><td class='n'>50 %</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>PV01 courbe euro (% pour +1 pb)</td><td class='n'>0,020</td><td class='n'>0,025</td><td><div class='jauge'><i style='width:78%;background:#1e8449'></i></div></td><td class='n'>78 %</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>PV01 courbe dollar (% pour +1 pb)</td><td class='n'>0,010</td><td class='n'>0,015</td><td><div class='jauge'><i style='width:68%;background:#1e8449'></i></div></td><td class='n'>68 %</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>Exposition brute au dollar (%)</td><td class='n'>37,50</td><td class='n'>50,00</td><td><div class='jauge'><i style='width:75%;background:#1e8449'></i></div></td><td class='n'>75 %</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>Perte depuis le début du mois (%)</td><td class='n'>0,000</td><td class='n'>2,00</td><td><div class='jauge'><i style='width:0%;background:#1e8449'></i></div></td><td class='n'>0 %</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr></table></section>
+<div class="grille">
+<section><h2>VaR des six modèles</h2><table><tr><th>Modèle</th><th>VaR 99 %</th><th>M FCFA</th><th>ES 97,5 %</th><th>Dép. 250 j</th><th>Bâle</th></tr><tr><td>Simulation historique</td><td class='n'>0,54 %</td><td class='n'>539</td><td class='n'>0,64 %</td><td class='n'>1</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>Normale</td><td class='n'>0,50 %</td><td class='n'>502</td><td class='n'>0,50 %</td><td class='n'>2</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>Student</td><td class='n'>0,55 %</td><td class='n'>552</td><td class='n'>0,57 %</td><td class='n'>1</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>EWMA (RiskMetrics)</td><td class='n'>0,44 %</td><td class='n'>438</td><td class='n'>0,44 %</td><td class='n'>6</td><td><span class='pastille' style='background:#fcefd9;color:#b9770e'>orange</span></td></tr><tr class=ref><td>Simulation historique filtrée (GARCH) (référence)</td><td class='n'>0,52 %</td><td class='n'>515</td><td class='n'>0,55 %</td><td class='n'>2</td><td><span class='pastille' style='background:#e3f4e8;color:#1e8449'>vert</span></td></tr><tr><td>Monte-Carlo</td><td class='n'>0,49 %</td><td class='n'>488</td><td class='n'>0,51 %</td><td class='n'>–</td><td>–</td></tr></table></section>
+<section><h2>D'où vient le risque (part de l'ES)</h2><div class='bar'><span>Taux euro</span><div class='piste'><i style='width:18%;background:#2a78d6'></i></div><b>8 %</b></div><div class='bar'><span>Taux dollar</span><div class='piste'><i style='width:10%;background:#eb6834'></i></div><b>5 %</b></div><div class='bar'><span>Actions zone euro</span><div class='piste'><i style='width:36%;background:#1baf7a'></i></div><b>16 %</b></div><div class='bar'><span>Actions américaines</span><div class='piste'><i style='width:36%;background:#eda100'></i></div><b>16 %</b></div><div class='bar'><span>Or</span><div class='piste'><i style='width:21%;background:#e87ba4'></i></div><b>10 %</b></div><div class='bar'><span>Change dollar</span><div class='piste'><i style='width:100%;background:#008300'></i></div><b>45 %</b></div>
+<p class="pied">Contribution de chaque facteur aux pertes des 2,5 % pires scénarios historiques (500 séances).</p></section>
+</div>
+<div class="grille">
+<section><h2>Six pires tests de résistance</h2><table><tr><th>Scénario</th><th>Effet</th><th>Md FCFA</th></tr><tr><td>Stagflation : taux +150 pb, actions −25 %, dollar −10 %, or +10 %</td><td class='n'>−11,0 %</td><td class='n'>−11,0</td></tr><tr><td>Taux euro et dollar +200 pb</td><td class='n'>−5,6 %</td><td class='n'>−5,6</td></tr><tr><td>Actions −30 %</td><td class='n'>−4,5 %</td><td class='n'>−4,5</td></tr><tr><td>Covid-19</td><td class='n'>−4,2 %</td><td class='n'>−4,2</td></tr><tr><td>Le dollar perd 10 % face à l'euro</td><td class='n'>−3,7 %</td><td class='n'>−3,7</td></tr><tr><td>Taux euro +200 pb (parallèle)</td><td class='n'>−3,7 %</td><td class='n'>−3,7</td></tr></table></section>
+<section><h2>Lecture</h2><div class="lecture">
+<p>La VaR de référence utilise 52 % de sa limite. Le modèle de référence a connu 2 dépassement(s) sur les 250 dernières séances : zone vert.</p>
+<p>Le change dollar explique 45 % de l'ES : l'exposition non couverte au dollar (37.5 % du portefeuille) est le premier risque des mauvais jours.</p>
+<p>Le scénario le plus coûteux ferait perdre 11,0 % ; 43 % de son ampleur suffiraient à faire perdre 5 % de la valeur.</p>
+</div></section></div>
+<p class="pied">Elisée Boco · données : Trésor américain, BCE, Yahoo Finance · VaR et ES en pertes positives · portefeuille rééquilibré chaque jour · code : github.com/Elisee-Boco/market-risk-dashboard</p>
+</body></html>

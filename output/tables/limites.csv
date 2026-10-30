@@ -1,0 +1,7 @@
+indicateur,libelle,valeur,limite,utilisation,statut
+var99_1j,VaR 99 % à 1 jour (% de la valeur),0.515330674204525,1.0,0.515330674204525,vert
+es975_1j,"Expected Shortfall 97,5 % à 1 jour (%)",0.5459067704549179,1.1,0.4962788822317435,vert
+pv01_eur,PV01 courbe euro (% pour +1 pb),0.019606124350409204,0.025,0.7842449740163682,vert
+pv01_usd,PV01 courbe dollar (% pour +1 pb),0.010166431565947764,0.015,0.6777621043965176,vert
+change_usd,Exposition brute au dollar (%),37.5,50.0,0.75,vert
+perte_mois,Perte depuis le début du mois (%),0.0,2.0,0.0,vert
