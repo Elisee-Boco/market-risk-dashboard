@@ -1,0 +1,37 @@
+Téléchargement du 2026-10-30 00:18 (UTC)
+OK  tresor_2005: 250 lignes
+OK  tresor_2006: 250 lignes
+OK  tresor_2007: 251 lignes
+OK  tresor_2008: 251 lignes
+OK  tresor_2009: 250 lignes
+OK  tresor_2010: 252 lignes
+OK  tresor_2011: 250 lignes
+OK  tresor_2012: 250 lignes
+OK  tresor_2013: 250 lignes
+OK  tresor_2014: 250 lignes
+OK  tresor_2015: 251 lignes
+OK  tresor_2016: 250 lignes
+OK  tresor_2017: 250 lignes
+OK  tresor_2018: 249 lignes
+OK  tresor_2019: 250 lignes
+OK  tresor_2020: 251 lignes
+OK  tresor_2021: 251 lignes
+OK  tresor_2022: 249 lignes
+OK  tresor_2023: 250 lignes
+OK  tresor_2024: 250 lignes
+OK  tresor_2025: 249 lignes
+OK  tresor_2026: 208 lignes
+OK  bce_zc_3M: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_6M: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_1Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_2Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_3Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_5Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_7Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_10Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_15Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_20Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_zc_30Y: 5662 lignes, 2004-09-06 au 2026-10-28
+OK  bce_eurusd: 5884 lignes, 2004-01-01 au 2026-10-29
+OK  bce_estr: 1813 lignes, 2019-10-01 au 2026-10-28
+ERR yahoo_cloture: 'NoneType' object has no attribute 'date'
